@@ -1,0 +1,77 @@
+import React, { useState } from "react";
+
+interface Usuario {
+  nombre: string;
+  password: string;
+}
+
+const App: React.FC = () => {
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [nombre, setNombre] = useState("");
+  const [password, setPassword] = useState("");
+  const [logueado, setLogueado] = useState<string | null>(null);
+  const [modo, setModo] = useState<"login" | "registro">("login");
+
+  const registrar = () => {
+    if (usuarios.find(u => u.nombre === nombre)) {
+      alert("Usuario ya existe");
+      return;
+    }
+    setUsuarios([...usuarios, { nombre, password }]);
+    alert("Usuario registrado correctamente");
+    setModo("login");
+  };
+
+  const login = () => {
+    const usuario = usuarios.find(u => u.nombre === nombre && u.password === password);
+    if (usuario) {
+      setLogueado(usuario.nombre);
+    } else {
+      alert("Credenciales incorrectas");
+    }
+  };
+
+  const logout = () => {
+    setLogueado(null);
+  };
+
+  return (
+    <div style={{ padding: "20px" }}>
+      {logueado ? (
+        <div>
+          <h2>Bienvenido {logueado}</h2>
+          <button onClick={logout}>Cerrar sesión</button>
+        </div>
+      ) : (
+        <div>
+          <h2>{modo === "login" ? "Login" : "Registro"}</h2>
+          <input
+            type="text"
+            placeholder="Nombre"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+          />
+          <br />
+          <input
+            type="password"
+            placeholder="Contraseña"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <br />
+          {modo === "login" ? (
+            <button onClick={login}>Entrar</button>
+          ) : (
+            <button onClick={registrar}>Registrar</button>
+          )}
+          <br />
+          <button onClick={() => setModo(modo === "login" ? "registro" : "login")}>
+            Cambiar a {modo === "login" ? "Registro" : "Login"}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default App;
